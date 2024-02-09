@@ -1,6 +1,8 @@
 package com.malbyte.qurankalamullah.feature_quran.domain.utils
 
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Juz
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 fun List<Juz>.mapToJuzIndexing(): List<JuzWithSurahIndex> {
     val groupList = this.groupBy { it.juz }
@@ -19,3 +21,9 @@ data class JuzWithSurahIndex(
     val surahList: List<String?>,
     val surahNumberList: List<Int?>
 )
+
+fun Long.toTimeDateString(): String {
+    val dateTime = java.util.Date(this)
+    val format = SimpleDateFormat("dd/MM/yyyy")
+    return format.format(dateTime)
+}

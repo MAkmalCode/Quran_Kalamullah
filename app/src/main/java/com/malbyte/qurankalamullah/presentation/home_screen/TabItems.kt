@@ -1,8 +1,9 @@
-package com.malbyte.qurankalamullah.presentation.tab_screen
+package com.malbyte.qurankalamullah.presentation.home_screen
 
 val tabListitems = listOf (
     "Surah",
-    "Juz"
+    "Juz",
+    "Boookmark"
     )
 
 

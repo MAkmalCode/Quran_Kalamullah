@@ -1,20 +1,48 @@
 package com.malbyte.qurankalamullah.feature_quran.data.repository
 
+import com.malbyte.qurankalamullah.feature_quran.data.data_source.BookmarkDao
 import com.malbyte.qurankalamullah.feature_quran.data.data_source.QuranDao
+import com.malbyte.qurankalamullah.feature_quran.domain.model.Bookmark
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Juz
+import com.malbyte.qurankalamullah.feature_quran.domain.model.Quran
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Surah
 import com.malbyte.qurankalamullah.feature_quran.domain.repository.QuranRepository
 import kotlinx.coroutines.flow.Flow
 
 class QuranRepositoryImpl(
-    private val dao: QuranDao
+    private val quranDao: QuranDao,
+    private val bookmarkDao: BookmarkDao
 ) : QuranRepository {
 
     override fun getSurah(): Flow<List<Surah>> {
-        return dao.getSurah()
+        return quranDao.getSurah()
     }
 
     override fun getJuz(): Flow<List<Juz>> {
-        return dao.getJuz()
+        return quranDao.getJuz()
+    }
+
+    override fun getReadSurah(sora: Int): Flow<List<Quran>> {
+        return quranDao.getReadSurah(sora)
+    }
+
+    override fun getReadJuz(juz: Int): Flow<List<Quran>> {
+        return quranDao.getReadJuz(juz)
+    }
+
+    override fun getBookmarkList(): Flow<List<Bookmark>> {
+        return bookmarkDao.getBookmarkList()
+    }
+
+    override suspend fun insertBookmark(bookmark: Bookmark) {
+        return bookmarkDao.insertBookmark(bookmark)
+    }
+
+    override suspend fun deleteBookmark(bookmark: Bookmark) {
+        return bookmarkDao.deleteBookmark(bookmark)
+    }
+
+    override suspend fun deleteAllBookmark() {
+        return bookmarkDao.deleteAllBookmark()
     }
 }

@@ -1,9 +1,6 @@
-package com.malbyte.qurankalamullah.presentation.tab_screen.juz_screen.state
+package com.malbyte.qurankalamullah.presentation.home_screen.state
 
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Juz
-
-sealed class JuzState {
-    data object Loading : JuzState()
-    data class Error(val message: String) : JuzState()
-    data class Success(val listJuz: List<Juz>) : JuzState()
-}
+data class JuzState(
+    val listJuz: List<Juz> = emptyList()
+)

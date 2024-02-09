@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.malbyte.qurankalamullah.ui.theme.QuranKalamullahTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.navigation.dependency
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,7 +25,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     DestinationsNavHost(
-                        navGraph = NavGraphs.root
+                        navGraph = NavGraphs.root,
+                        dependenciesContainerBuilder = {
+                            dependency(viewModel<GlobalViewModel>(this@MainActivity))
+                        }
                     )
                 }
             }

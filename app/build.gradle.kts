@@ -41,11 +41,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true
@@ -110,6 +110,13 @@ dependencies {
     // nav
     implementation("io.github.raamcosta.compose-destinations:core:1.9.54")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.54")
+
+    // collect lifrcycle
+    implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
+
+    // kotpref
+    implementation ("com.chibatching.kotpref:kotpref:2.13.1")
+    implementation ("com.chibatching.kotpref:initializer:2.13.1")
 
 }
 

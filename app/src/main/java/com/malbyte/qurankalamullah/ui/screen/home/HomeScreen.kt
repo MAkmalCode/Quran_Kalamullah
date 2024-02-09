@@ -40,7 +40,7 @@ fun HomeScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        HomeItem(item = "Terakhir dibaca", surah = "Al-Fatihah", ayah = 4, juz = 1)
+        HomeItem(item = "Terakhir dibaca", surah = "Al-Fatihah", ayah = 4) {}
 
         Spacer(modifier = Modifier.height(20.dp))
 
