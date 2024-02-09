@@ -1,0 +1,124 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e5bf6c19b20792b0900e5da0d07d3e44",
+    "entities": [
+      {
+        "tableName": "quran",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `jozz` INTEGER, `sora` INTEGER, `sora_name_en` TEXT, `sora_name_ar` TEXT, `page` INTEGER, `aya_no` INTEGER, `aya_text` TEXT, `aya_text_emlaey` TEXT, `translation_id` TEXT, `footnotes_id` TEXT, `sora_name_id` TEXT, `sora_descend_place` TEXT, `sora_name_emlaey` TEXT, `translation_en` TEXT, `footnotes_en` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "juz",
+            "columnName": "jozz",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "surah",
+            "columnName": "sora",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "surahNameEng",
+            "columnName": "sora_name_en",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "surahNameAr",
+            "columnName": "sora_name_ar",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "page",
+            "columnName": "page",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ayahNumb",
+            "columnName": "aya_no",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ayahText",
+            "columnName": "aya_text",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ayahTextEmlaey",
+            "columnName": "aya_text_emlaey",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "translationIndo",
+            "columnName": "translation_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "footnotesIndo",
+            "columnName": "footnotes_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "surahNameIndo",
+            "columnName": "sora_name_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "descendPlace",
+            "columnName": "sora_descend_place",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "surahNameEmlaey",
+            "columnName": "sora_name_emlaey",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "translationEng",
+            "columnName": "translation_en",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "footnotesEng",
+            "columnName": "footnotes_en",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5bf6c19b20792b0900e5da0d07d3e44')"
+    ]
+  }
+}
