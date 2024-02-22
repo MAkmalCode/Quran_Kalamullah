@@ -118,6 +118,9 @@ dependencies {
     implementation ("com.chibatching.kotpref:kotpref:2.13.1")
     implementation ("com.chibatching.kotpref:initializer:2.13.1")
 
+    // snow player
+    implementation ("com.github.jrfeng.snow:player:1.2.13")
+
 }
 
 kapt {

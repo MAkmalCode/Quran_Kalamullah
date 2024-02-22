@@ -16,16 +16,26 @@ import com.malbyte.qurankalamullah.feature_quran.domain.use_case.GetReadSurahUse
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.GetSurahUseCase
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.InsertBookmarkUseCase
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.QuranUseCases
+import com.malbyte.qurankalamullah.service.MyPlayerService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import snow.player.PlayerClient
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun providePlayer(
+        @ApplicationContext context: Context
+    ): PlayerClient{
+        return PlayerClient.newInstance(context, MyPlayerService::class.java)
+    }
 
     @Provides
     @Singleton

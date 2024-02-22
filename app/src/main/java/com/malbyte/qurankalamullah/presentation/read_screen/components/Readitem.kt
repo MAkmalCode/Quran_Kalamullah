@@ -49,7 +49,8 @@ fun Readitem(
     juz: Int,
     bookMark: () -> Unit,
     copy: () -> Unit,
-    share: () -> Unit
+    share: () -> Unit,
+    playAyah: () -> Unit
 ) {
 
     var btnState by remember {
@@ -166,7 +167,7 @@ fun Readitem(
                     }
                     IconButton(
                         modifier = Modifier.weight(0.25f),
-                        onClick = { /*TODO*/ }
+                        onClick = { playAyah() }
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.VolumeUp,
