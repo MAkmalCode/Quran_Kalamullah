@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.SkipNext
 import androidx.compose.material.icons.rounded.SkipPrevious
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.malbyte.qurankalamullah.presentation.read_screen.IsPlaying
 import com.malbyte.qurankalamullah.ui.theme.Primary
 
 @Composable
@@ -32,7 +34,6 @@ fun PlayerControlPanel(
     qori: String,
     next: () -> Unit,
     previous: () -> Unit,
-    pause: () -> Unit,
     stop: () -> Unit,
     play: () -> Unit,
     isPaused: Boolean
@@ -70,43 +71,33 @@ fun PlayerControlPanel(
                 horizontalArrangement = Arrangement.End
             ) {
                 IconButton(
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        previous()
+                    }
                 ) {
                     Icon(imageVector = Icons.Rounded.SkipPrevious, contentDescription = "")
                 }
                 IconButton(
                     modifier = Modifier
                         .background(Primary, CircleShape),
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        play()
+                    }
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.PlayArrow,
+                        imageVector = if(isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
                         tint = Color.White,
                         contentDescription = ""
                     )
                 }
                 IconButton(
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        next()
+                    }
                 ) {
                     Icon(imageVector = Icons.Rounded.SkipNext, contentDescription = "")
                 }
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PlayerControlPanelPrev() {
-    PlayerControlPanel(
-        "",
-        1,
-        "Abdul basit samad",
-        {},
-        {},
-        {},
-        {},
-        {},
-        false
-    )
 }

@@ -8,5 +8,6 @@ data class QuranUseCases(
     val insertBookmarkUseCase: InsertBookmarkUseCase,
     val getBookmarkUseCase: GetBookmarkUseCase,
     val deleteAllBookmark: DeleteAllBookmark,
-    val deleteBookmark: DeleteBookmark
+    val deleteBookmark: DeleteBookmark,
+    val searchSurahUseCase: SearchSurahUseCase
 )

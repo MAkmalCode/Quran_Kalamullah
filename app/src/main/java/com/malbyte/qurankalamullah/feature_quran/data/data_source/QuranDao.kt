@@ -21,4 +21,10 @@ interface QuranDao {
 
     @Query("SELECT * FROM quran WHERE jozz = :juz")
     fun getReadJuz(juz: Int): Flow<List<Quran>>
+
+    @Query("SELECT * FROM quran where sora_name_emlaey LIKE '%'||:search||'%' OR sora = '%'||:search||'%' GROUP BY sora")
+    fun searchSurah(search: String): Flow<List<Surah>>
+
+    @Query("SELECT * FROM quran where translation_id LIKE '%'||:search||'%' OR aya_text_emlaey = '%'||:search||'%' OR translation_en = '%'||:search||'%' GROUP BY sora")
+    fun searchEntireQuran(search: String): Flow<List<Quran>>
 }

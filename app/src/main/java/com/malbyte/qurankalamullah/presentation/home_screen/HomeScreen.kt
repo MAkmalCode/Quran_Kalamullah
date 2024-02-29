@@ -14,8 +14,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,8 +55,11 @@ import com.malbyte.qurankalamullah.ui.theme.Primary
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.collectAsState
+import com.malbyte.qurankalamullah.presentation.destinations.SettingScreenDestination
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @RootNavGraph(start = true)
 @Destination
 @Composable
@@ -55,176 +68,252 @@ fun HomeScreen(
     globalViewModel: GlobalViewModel,
     navigator: DestinationsNavigator
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        val context = LocalContext.current
-        var selectedTabIndex by remember {
-            mutableIntStateOf(0)
-        }
-        val pagerState = rememberPagerState {
-            tabListitems.size
-        }
-        val surahState = homeViewModel.surahState.value
-        LaunchedEffect(selectedTabIndex) {
-            pagerState.animateScrollToPage(selectedTabIndex)
-        }
-        LaunchedEffect(pagerState.currentPage) {
-            selectedTabIndex = pagerState.currentPage
-        }
-        LaunchedEffect(surahState) {
-            globalViewModel.setTotalAyah(surahList = surahState.listSurah)
-        }
 
-        val juzState by homeViewModel.juzState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    var selectedTabIndex by remember {
+        mutableIntStateOf(0)
+    }
+    val pagerState = rememberPagerState {
+        tabListitems.size
+    }
+    val surahState = homeViewModel.surahState.value
+    LaunchedEffect(selectedTabIndex) {
+        pagerState.animateScrollToPage(selectedTabIndex)
+    }
+    LaunchedEffect(pagerState.currentPage) {
+        selectedTabIndex = pagerState.currentPage
+    }
+    LaunchedEffect(surahState) {
+        globalViewModel.setTotalAyah(surahList = surahState.listSurah)
+    }
 
-        HomeItem(item = "Terakhir di baca", surah = LastRead.surahName, ayah = LastRead.ayahNumber) {
-            navigator.navigate(ReadScreenDestination(
-                ReadArg(
-                    2,
-                    LastRead.surahNumber,
-                    0,
-                    LastRead.position
-                )
-            ))
-        }
+    val juzState by homeViewModel.juzState.collectAsStateWithLifecycle()
+    val searchText by homeViewModel.searchText.collectAsState()
+    val isSearching by homeViewModel.isSearching.collectAsState()
+    val quranList by homeViewModel.searchSurahState.collectAsState()
 
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            backgroundColor = Color.White,
-            contentColor = Primary,
-            modifier = Modifier
-                .padding(16.dp)
-                .clip(CircleShape),
-        ) {
-            tabListitems.forEachIndexed { index, item ->
-                Tab(
-                    selected = index == selectedTabIndex,
-                    onClick = {
-                        selectedTabIndex = index
-                    },
-                    text = {
-                        Text(
-                            text = item,
-                            color = Primary
-                        )
+    LaunchedEffect(searchText){
+        homeViewModel.searchResult(searchText)
+    }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(text = "Qur'an Kalamullah")
+                },
+                actions = {
+                    IconButton(onClick = {
+                        navigator.navigate(SettingScreenDestination)
+                    }) {
+
+                        Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")
                     }
-                )
-            }
+                }
+            )
         }
-        HorizontalPager(
-            state = pagerState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) { index ->
-            when (index) {
+    ) {
 
-                0 -> {
-                    LazyColumn(content = {
-                        items(surahState.listSurah) { surah ->
-                            SurahItem(
-                                surahNo = surah.surah,
-                                surahNameEn = surah.surahNameEn,
-                                surahNameAr = surah.surahNameAr,
-                                totalAyah = surah.totalAyah,
-                                surahDescendPlace = surah.surahDescendPlace,
-                                goToRead = {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+        ) {
+
+            SearchBar(
+                query = searchText,
+                onQueryChange = {
+                    homeViewModel.onSearchTextChange(it)
+                },
+                onSearch = {
+                    homeViewModel.onSearchTextChange(it)
+                },
+                active = isSearching,
+                onActiveChange = { homeViewModel.onToogleSearch() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                leadingIcon = {
+                    IconButton(onClick = {
+                        
+                    }) {
+
+                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "")
+                    }
+                }
+            ) {
+                LazyColumn(content = {
+                    items(quranList.listQuran){
+                        SurahItem(
+                            surahNo = it.surah,
+                            surahNameEn = it.surahNameEn,
+                            surahNameAr = it.surahNameAr,
+                            totalAyah = it.totalAyah,
+                            surahDescendPlace = it.surahDescendPlace
+                        ) {
+                            navigator.navigate(ReadScreenDestination(
+                                ReadArg(
+                                    readType = 0,
+                                    surahNumb = it.surah,
+                                    juzNumb = null,
+                                    position = 0
+                                )
+                            ))
+                        }
+                    }
+                })
+            }
+
+            HomeItem(item = "Terakhir di baca", surah = LastRead.surahName, ayah = LastRead.ayahNumber) {
+                navigator.navigate(ReadScreenDestination(
+                    ReadArg(
+                        2,
+                        LastRead.surahNumber,
+                        0,
+                        LastRead.position
+                    )
+                ))
+            }
+
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                backgroundColor = Color.White,
+                contentColor = Primary,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clip(CircleShape),
+            ) {
+                tabListitems.forEachIndexed { index, item ->
+                    Tab(
+                        selected = index == selectedTabIndex,
+                        onClick = {
+                            selectedTabIndex = index
+                        },
+                        text = {
+                            Text(
+                                text = item,
+                                color = Primary
+                            )
+                        }
+                    )
+                }
+            }
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) { index ->
+                when (index) {
+
+                    0 -> {
+                        LazyColumn(content = {
+                            items(surahState.listSurah) { surah ->
+                                SurahItem(
+                                    surahNo = surah.surah,
+                                    surahNameEn = surah.surahNameEn,
+                                    surahNameAr = surah.surahNameAr,
+                                    totalAyah = surah.totalAyah,
+                                    surahDescendPlace = surah.surahDescendPlace,
+                                    goToRead = {
+                                        navigator.navigate(
+                                            ReadScreenDestination(
+                                                navArgs = ReadArg(
+                                                    0,
+                                                    surah.surah,
+                                                    0,
+                                                    0
+                                                )
+                                            )
+                                        )
+                                    }
+                                )
+                            }
+                        })
+                    }
+
+                    1 -> {
+                        LazyColumn(content = {
+                            val groupByJuz = juzState.listJuz.mapToJuzIndexing()
+                            items(groupByJuz) { juz ->
+                                JuzItem(
+                                    juzNumb = juz.juzNumber,
+                                    listSurahJuz = juz.surahList,
+                                    surahNumblist = juz.surahNumberList
+                                ) {
                                     navigator.navigate(
                                         ReadScreenDestination(
                                             navArgs = ReadArg(
+                                                1,
                                                 0,
-                                                surah.surah,
-                                                0,
+                                                juz.juzNumber,
                                                 0
                                             )
                                         )
                                     )
                                 }
-                            )
-                        }
-                    })
-                }
-
-                1 -> {
-                    LazyColumn(content = {
-                        val groupByJuz = juzState.listJuz.mapToJuzIndexing()
-                        items(groupByJuz) { juz ->
-                            JuzItem(
-                                juzNumb = juz.juzNumber,
-                                listSurahJuz = juz.surahList,
-                                surahNumblist = juz.surahNumberList
-                            ) {
-                                navigator.navigate(
-                                    ReadScreenDestination(
-                                        navArgs = ReadArg(
-                                            1,
-                                            0,
-                                            juz.juzNumber,
-                                            0
-                                        )
-                                    )
-                                )
-                            }
-                        }
-                    })
-                }
-
-                2 -> {
-                    val bookmarkList =
-                        homeViewModel.bookmarkState.collectAsStateWithLifecycle().value
-
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        
-                        Text(
-                            text = "Delete All",
-                            color = Primary,
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .padding(end = 16.dp)
-                                .clickable {
-                                homeViewModel.deleteAllBookmark()
-                                Toast.makeText(context, "Delete All", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        LazyColumn(content = {
-                            items(bookmarkList.size) { index ->
-                                val bookmark = bookmarkList[index]
-                                BookmarkItems(
-                                    surahName = bookmark.surahName,
-                                    ayahNumber = bookmark.ayahNumber,
-                                    previewText = bookmark.ayahText,
-                                    timeAdded = bookmark.timeAdded,
-                                    goToRead = {
-                                        navigator.navigate(
-                                            ReadScreenDestination(
-                                                ReadArg(
-                                                    2,
-                                                    bookmark.surahNumber,
-                                                    0,
-                                                    bookmark.position
-                                                )
-                                            )
-                                        )
-                                    },
-                                    delete = {
-                                        homeViewModel.deleteBookmmark(Bookmark(
-                                            bookmark.id,
-                                            bookmark.surahName,
-                                            bookmark.ayahNumber,
-                                            bookmark.ayahNumber,
-                                            bookmark.ayahText,
-                                            bookmark.position,
-                                            bookmark.timeAdded
-                                        ))
-                                        Toast.makeText(context, "Delete", Toast.LENGTH_SHORT).show()
-                                    }
-                                )
                             }
                         })
+                    }
+
+                    2 -> {
+                        val bookmarkList =
+                            homeViewModel.bookmarkState.collectAsStateWithLifecycle().value
+
+                        Column(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+
+                            Text(
+                                text = "Delete All",
+                                color = Primary,
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .padding(end = 16.dp)
+                                    .clickable {
+                                        homeViewModel.deleteAllBookmark()
+                                        Toast
+                                            .makeText(context, "Delete All", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            LazyColumn(content = {
+                                items(bookmarkList.size) { index ->
+                                    val bookmark = bookmarkList[index]
+                                    BookmarkItems(
+                                        surahName = bookmark.surahName,
+                                        ayahNumber = bookmark.ayahNumber,
+                                        previewText = bookmark.ayahText,
+                                        timeAdded = bookmark.timeAdded,
+                                        goToRead = {
+                                            navigator.navigate(
+                                                ReadScreenDestination(
+                                                    ReadArg(
+                                                        2,
+                                                        bookmark.surahNumber,
+                                                        0,
+                                                        bookmark.position
+                                                    )
+                                                )
+                                            )
+                                        },
+                                        delete = {
+                                            homeViewModel.deleteBookmmark(Bookmark(
+                                                bookmark.id,
+                                                bookmark.surahName,
+                                                bookmark.ayahNumber,
+                                                bookmark.ayahNumber,
+                                                bookmark.ayahText,
+                                                bookmark.position,
+                                                bookmark.timeAdded
+                                            ))
+                                            Toast.makeText(context, "Delete", Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                }
+                            })
+                        }
                     }
                 }
             }

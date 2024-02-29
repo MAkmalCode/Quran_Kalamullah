@@ -45,4 +45,13 @@ class QuranRepositoryImpl(
     override suspend fun deleteAllBookmark() {
         return bookmarkDao.deleteAllBookmark()
     }
+
+    override fun searchSurah(search: String): Flow<List<Surah>> {
+        return quranDao.searchSurah(search)
+    }
+
+
+    override fun searchEntireQuran(search: String): Flow<List<Quran>> {
+        return  quranDao.searchEntireQuran(search)
+    }
 }

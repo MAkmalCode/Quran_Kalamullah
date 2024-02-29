@@ -16,6 +16,7 @@ import com.malbyte.qurankalamullah.feature_quran.domain.use_case.GetReadSurahUse
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.GetSurahUseCase
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.InsertBookmarkUseCase
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.QuranUseCases
+import com.malbyte.qurankalamullah.feature_quran.domain.use_case.SearchSurahUseCase
 import com.malbyte.qurankalamullah.service.MyPlayerService
 import dagger.Module
 import dagger.Provides
@@ -72,7 +73,8 @@ object AppModule {
             insertBookmarkUseCase = InsertBookmarkUseCase(repository),
             getBookmarkUseCase = GetBookmarkUseCase(repository),
             deleteAllBookmark = DeleteAllBookmark(repository),
-            deleteBookmark = DeleteBookmark(repository)
+            deleteBookmark = DeleteBookmark(repository),
+            searchSurahUseCase = SearchSurahUseCase(repository)
         )
     }
 }

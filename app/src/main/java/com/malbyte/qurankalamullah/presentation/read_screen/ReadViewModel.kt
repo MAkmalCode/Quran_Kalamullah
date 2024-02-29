@@ -1,9 +1,11 @@
 package com.malbyte.qurankalamullah.presentation.read_screen
 
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.malbyte.qurankalamullah.feature_quran.data.SettingPreference
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Bookmark
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Quran
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.QuranUseCases
@@ -29,13 +31,16 @@ class ReadViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    val navArgs: ReadArg = savedStateHandle.navArgs()
+    private val navArgs: ReadArg = savedStateHandle.navArgs()
 
     private val _listAyahState = MutableStateFlow<List<Quran>>(emptyList())
     val listAyahState = _listAyahState.asStateFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(500), emptyList())
 
-    val lastToPost = mutableStateOf(navArgs.position)
+    val lastToPost = mutableIntStateOf(navArgs.position)
+
+    private val qoriId = SettingPreference.listQori[SettingPreference.currentQori].qoriId
+    private val qoriName = SettingPreference.listQori[SettingPreference.currentQori].qoriName
 
     fun insertBookmak(bookmark: Bookmark) {
         viewModelScope.launch {
@@ -53,6 +58,10 @@ class ReadViewModel @Inject constructor(
                 playerClient.connect {
                     val playList = allPlayList(event.quranList)
                     playerClient.setPlaylist(playList, true)
+                    isPLaying.value = IsPlaying.PLAY_ALL
+                    playerClient.addOnPlayingMusicItemChangeListener { _, position, _ ->
+                        quran.value = event.quranList[position]
+                    }
                 }
             }
 
@@ -80,8 +89,19 @@ class ReadViewModel @Inject constructor(
             }
 
             PlayerEvent.PausePlayAyah -> {
-                playerClient.pause()
-                isPLaying.value = IsPlaying.PAUSE
+                playerClient.playPause()
+                playerClient.playMode = PlayMode.SINGLE_ONCE
+                playerClient.addOnWaitPlayCompleteChangeListener {
+                    if (it){
+                        isPLaying.value = IsPlaying.PAUSE
+                    }
+                }
+                isPLaying.value = if(isPLaying.value == IsPlaying.PAUSE){
+                    IsPlaying.PLAYING
+                }else{
+                    IsPlaying.PAUSE
+                }
+
             }
         }
     }
@@ -98,8 +118,8 @@ class ReadViewModel @Inject constructor(
             musicItemList.add(
                 MusicItem.Builder()
                     .setTitle("${it.surahNameEmlaey}: ${it.ayahNumb}")
-                    .setArtist("Abdul basit Samad")
-                    .setUri("https://everyayah.com/data/AbdulSamad_64kbps_QuranExplorer.Com/$formattedSurahNumber$formattedAyahNumber.mp3")
+                    .setArtist(qoriName)
+                    .setUri("https://everyayah.com/data/$qoriId/$formattedSurahNumber$formattedAyahNumber.mp3")
                     .setIconUri("https://iqna.ir/files/id/news/2023/12/26/50089_989.jpg")
                     .autoDuration()
                     .build()
@@ -123,8 +143,8 @@ class ReadViewModel @Inject constructor(
             .append(
                 MusicItem.Builder()
                     .setTitle("${quran.surahNameEmlaey}: ${quran.ayahNumb}")
-                    .setArtist("Abdul basit Samad")
-                    .setUri("https://everyayah.com/data/AbdulSamad_64kbps_QuranExplorer.Com/$formattedSurahNumber$formattedAyahNumber.mp3")
+                    .setArtist(qoriName)
+                    .setUri("https://everyayah.com/data/$qoriId/$formattedSurahNumber$formattedAyahNumber.mp3")
                     .setIconUri("https://iqna.ir/files/id/news/2023/12/26/50089_989.jpg")
                     .autoDuration()
                     .build()
@@ -163,7 +183,7 @@ class ReadViewModel @Inject constructor(
         data class PlayAyah(val quran: Quran) : PlayerEvent()
         data object PausePlayAyah : PlayerEvent()
         data class PlayAll(val quranList: List<Quran>) : PlayerEvent()
-`        data object Next : PlayerEvent()
+        data object Next : PlayerEvent()
         data object Previous : PlayerEvent()
         data object Stop : PlayerEvent()
     }
@@ -172,5 +192,6 @@ class ReadViewModel @Inject constructor(
 enum class IsPlaying{
     PLAYING,
     NOT_PLAYING,
-    PAUSE
+    PAUSE,
+    PLAY_ALL,
 }

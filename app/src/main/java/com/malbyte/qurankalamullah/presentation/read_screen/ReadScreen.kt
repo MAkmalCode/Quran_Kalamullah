@@ -8,6 +8,11 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Pause
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.malbyte.qurankalamullah.feature_quran.data.LastRead
+import com.malbyte.qurankalamullah.feature_quran.data.SettingPreference
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Bookmark
 import com.malbyte.qurankalamullah.presentation.GlobalViewModel
 import com.malbyte.qurankalamullah.presentation.components.PlayerControlPanel
@@ -41,14 +47,26 @@ fun ReadScreen(
         lazyColumnState.scrollToItem(position)
     }
     val isPlayingState = viewModel.isPLaying
+    val quran = viewModel.quran.value
 
     Scaffold(
+
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+//                viewModel.onEvent(ReadViewModel.PlayerEvent.PlayAll())
+            }) {
+                Icon(
+                    imageVector = if (isPlayingState.value == IsPlaying.PAUSE) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
+                    contentDescription = ""
+                )
+            }
+        },
         bottomBar = {
-            if (isPlayingState.value == IsPlaying.PLAYING || isPlayingState.value == IsPlaying.PAUSE){
+            if (isPlayingState.value == IsPlaying.PLAYING || isPlayingState.value == IsPlaying.PAUSE) {
                 PlayerControlPanel(
-                    surahName = viewModel.quran.value?.surahNameEmlaey!!,
-                    ayahNumber = viewModel.quran.value?.ayahNumb!!,
-                    qori = "Abdul basit samad",
+                    surahName = quran?.surahNameEmlaey ?: "",
+                    ayahNumber = quran?.ayahNumb ?: 1,
+                    qori = SettingPreference.listQori[SettingPreference.currentQori].qoriName,
                     next = {
                         viewModel.onEvent(ReadViewModel.PlayerEvent.Next)
                     },
@@ -56,10 +74,7 @@ fun ReadScreen(
                         viewModel.onEvent(ReadViewModel.PlayerEvent.Previous)
                     },
                     play = {
-                        viewModel.onEvent(ReadViewModel.PlayerEvent.PlayAyah())
-                    },
-                    pause = {
-                        viewModel.onEvent(ReadViewModel.PlayerEvent.Pause)
+                        viewModel.onEvent(ReadViewModel.PlayerEvent.PausePlayAyah)
                     },
                     stop = {
                         viewModel.onEvent(ReadViewModel.PlayerEvent.Stop)

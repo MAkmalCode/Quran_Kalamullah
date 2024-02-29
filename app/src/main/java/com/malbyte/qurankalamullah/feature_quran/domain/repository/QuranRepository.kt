@@ -1,9 +1,5 @@
 package com.malbyte.qurankalamullah.feature_quran.domain.repository
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Bookmark
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Juz
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Quran
@@ -20,4 +16,6 @@ interface QuranRepository {
     suspend fun insertBookmark(bookmark: Bookmark)
     suspend fun deleteBookmark(bookmark: Bookmark)
     suspend fun deleteAllBookmark()
+    fun searchSurah(search: String): Flow<List<Surah>>
+    fun searchEntireQuran(search: String): Flow<List<Quran>>
 }
