@@ -1,7 +1,7 @@
 package com.malbyte.qurankalamullah.feature_quran.data.repository
 
-import com.malbyte.qurankalamullah.feature_quran.data.data_source.BookmarkDao
-import com.malbyte.qurankalamullah.feature_quran.data.data_source.QuranDao
+import com.malbyte.qurankalamullah.feature_quran.data.data_source.local.BookmarkDao
+import com.malbyte.qurankalamullah.feature_quran.data.data_source.local.QuranDao
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Bookmark
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Juz
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Quran

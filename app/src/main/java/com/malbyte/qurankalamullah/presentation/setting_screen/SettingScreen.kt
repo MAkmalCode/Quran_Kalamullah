@@ -1,5 +1,6 @@
 package com.malbyte.qurankalamullah.presentation.setting_screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,7 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +43,14 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun SettingScreen() {
 
+    var settingState by remember {
+        mutableIntStateOf(0)
+    }
+
+    var langState by remember {
+        mutableStateOf(SettingPreference.currentLang)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,6 +59,19 @@ fun SettingScreen() {
         var showDialog by remember {
             mutableStateOf(false)
         }
+        if (showDialog == true) {
+
+            MinimalDialog(
+                listQori = SettingPreference.listQori,
+                listLanguage = SettingPreference.listLanguage,
+                settingState = settingState,
+                onDismissRequest = {
+                    showDialog = false
+                    langState = SettingPreference.currentLang
+                }
+            )
+        }
+
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,6 +80,7 @@ fun SettingScreen() {
             elevation = CardDefaults.cardElevation(4.dp),
             onClick = {
                 showDialog = true
+                settingState = 0
             }
         ) {
             Column(
@@ -62,15 +89,6 @@ fun SettingScreen() {
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (showDialog == true) {
-
-                    MinimalDialog(
-                        listQori = SettingPreference.listQori,
-                        onDismissRequest = {
-                            showDialog = false
-                        }
-                    )
-                }
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -82,7 +100,7 @@ fun SettingScreen() {
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Current Qori",
+                        text = if(langState == SettingPreference.INDONESIA) "Qori Sekarang" else "Current Qori",
                         fontSize = 20.sp
                     )
                 }
@@ -93,14 +111,58 @@ fun SettingScreen() {
                 )
             }
         }
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(Color.White),
+            elevation = CardDefaults.cardElevation(4.dp),
+            onClick = {
+                showDialog = true
+                settingState = 1
+                Log.d("check state lang", SettingPreference.listLanguage[SettingPreference.currentLang])
+            }
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Icon(
+                        imageVector = Icons.Rounded.Translate,
+                        contentDescription = "",
+                        tint = Primary
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = if(langState == SettingPreference.INDONESIA) "Bahasa Sekarang" else "Current Language",
+                        fontSize = 20.sp
+                    )
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = SettingPreference.listLanguage[langState],
+                    color = Color.Gray
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun MinimalDialog(
     onDismissRequest: () -> Unit,
-    listQori: List<SettingPreference.Qori>
+    listQori: List<SettingPreference.Qori>,
+    listLanguage: List<String>,
+    settingState: Int
 ) {
+
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
             modifier = Modifier
@@ -109,16 +171,30 @@ fun MinimalDialog(
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
-            listQori.forEachIndexed { index, qori ->
-                TextButton(
-                    onClick = {
-                        SettingPreference.currentQori = index
-                        onDismissRequest()
-                    },
-                ) {
-                    Text(text = qori.qoriName)
+            if (settingState == 0){
+                listQori.forEachIndexed { index, qori ->
+                    TextButton(
+                        onClick = {
+                            SettingPreference.currentQori = index
+                            onDismissRequest()
+                        },
+                    ) {
+                        Text(text = qori.qoriName)
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
                 }
-                Spacer(modifier = Modifier.height(5.dp))
+            }else{
+                listLanguage.forEachIndexed { index, lang ->
+                    TextButton(
+                        onClick = {
+                            SettingPreference.currentLang = index
+                            onDismissRequest()
+                        },
+                    ) {
+                        Text(text = lang)
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
             }
         }
     }

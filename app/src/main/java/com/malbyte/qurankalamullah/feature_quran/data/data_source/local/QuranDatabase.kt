@@ -1,4 +1,4 @@
-package com.malbyte.qurankalamullah.feature_quran.data.data_source
+package com.malbyte.qurankalamullah.feature_quran.data.data_source.local
 
 import android.content.Context
 import androidx.room.Database

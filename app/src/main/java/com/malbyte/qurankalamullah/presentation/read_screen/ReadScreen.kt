@@ -41,7 +41,7 @@ fun ReadScreen(
     val getTotalAyahList = remember {
         globalViewModel.getTotalAyah()
     }
-    val position = viewModel.lastToPost.value!!
+    val position = viewModel.lastToPost.intValue!!
     val lazyColumnState = rememberLazyListState()
     LaunchedEffect(true) {
         lazyColumnState.scrollToItem(position)
@@ -98,7 +98,7 @@ fun ReadScreen(
                         Readitem(
                             ayahText = quran.ayahText,
                             ayahNumb = quran.ayahNumb,
-                            translateId = quran.translationIndo,
+                            translateId = if (SettingPreference.currentLang == SettingPreference.INDONESIA) quran.translationIndo else quran.translationEng,
                             countAyah = getTotalAyahList[quran.surah!! - 1],
                             descentPlace = quran.descendPlace!!,
                             surahName = quran.surahNameEmlaey!!,
@@ -117,20 +117,20 @@ fun ReadScreen(
                                 )
                                 Toast.makeText(
                                     context,
-                                    "Telah menambahkan bookmark",
+                                    if (SettingPreference.currentLang == SettingPreference.INDONESIA) "Telah menambahkan bookmark" else "Added to bookmark",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             },
                             copy = {
                                 copyToClipboard(
                                     context,
-                                    "Surah: ${quran.surahNameEmlaey}\nAyat: ${quran.ayahNumb}\n${quran.ayahText}\n${quran.translationIndo}"
+                                    "Surah: ${quran.surahNameEmlaey}\nAyat: ${quran.ayahNumb}\n${quran.ayahText}\n${if (SettingPreference.currentLang == SettingPreference.INDONESIA) quran.translationIndo else quran.translationEng}"
                                 )
-                                Toast.makeText(context, "Copy ke clipboard", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, if(SettingPreference.currentLang == SettingPreference.INDONESIA) "Copy ke clipboard" else "Copy to clipboard", Toast.LENGTH_SHORT)
                                     .show()
                             },
                             share = {
-                                context.startActivity(shareButton("Surah: ${quran.surahNameEmlaey}\nAyat: ${quran.ayahNumb}\n${quran.ayahText}\n${quran.translationIndo}"))
+                                context.startActivity(shareButton("Surah: ${quran.surahNameEmlaey}\nAyat: ${quran.ayahNumb}\n${quran.ayahText}\n${if (SettingPreference.currentLang == SettingPreference.INDONESIA) quran.translationIndo else quran.translationEng}"))
                             },
                             playAyah = {
                                 viewModel.onEvent(ReadViewModel.PlayerEvent.PlayAyah(quran))

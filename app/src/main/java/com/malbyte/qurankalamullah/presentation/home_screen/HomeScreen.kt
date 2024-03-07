@@ -17,9 +17,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,14 +53,14 @@ import com.malbyte.qurankalamullah.presentation.read_screen.ReadArg
 import com.malbyte.qurankalamullah.ui.component.HomeItem
 import com.malbyte.qurankalamullah.ui.theme.Primary
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
+import com.malbyte.qurankalamullah.feature_quran.data.GlobalPreference
+import com.malbyte.qurankalamullah.feature_quran.data.SettingPreference
+import com.malbyte.qurankalamullah.presentation.destinations.FindQiblaScreenDestination
 import com.malbyte.qurankalamullah.presentation.destinations.SettingScreenDestination
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
-@RootNavGraph(start = true)
 @Destination
 @Composable
 fun HomeScreen(
@@ -68,6 +68,8 @@ fun HomeScreen(
     globalViewModel: GlobalViewModel,
     navigator: DestinationsNavigator
 ) {
+
+    GlobalPreference.firstTime = 1
 
     val context = LocalContext.current
     var selectedTabIndex by remember {
@@ -92,7 +94,7 @@ fun HomeScreen(
     val isSearching by homeViewModel.isSearching.collectAsState()
     val quranList by homeViewModel.searchSurahState.collectAsState()
 
-    LaunchedEffect(searchText){
+    LaunchedEffect(searchText) {
         homeViewModel.searchResult(searchText)
     }
 
@@ -104,9 +106,13 @@ fun HomeScreen(
                 },
                 actions = {
                     IconButton(onClick = {
+                        navigator.navigate(FindQiblaScreenDestination)
+                    }) {
+                        Icon(imageVector = Icons.Rounded.Explore, contentDescription = "")
+                    }
+                    IconButton(onClick = {
                         navigator.navigate(SettingScreenDestination)
                     }) {
-
                         Icon(imageVector = Icons.Rounded.Settings, contentDescription = "")
                     }
                 }
@@ -135,15 +141,14 @@ fun HomeScreen(
                     .padding(horizontal = 16.dp),
                 leadingIcon = {
                     IconButton(onClick = {
-                        
+                        navigator.navigateUp()
                     }) {
-
                         Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "")
                     }
                 }
             ) {
                 LazyColumn(content = {
-                    items(quranList.listQuran){
+                    items(quranList.listQuran) {
                         SurahItem(
                             surahNo = it.surah,
                             surahNameEn = it.surahNameEn,
@@ -151,28 +156,36 @@ fun HomeScreen(
                             totalAyah = it.totalAyah,
                             surahDescendPlace = it.surahDescendPlace
                         ) {
-                            navigator.navigate(ReadScreenDestination(
-                                ReadArg(
-                                    readType = 0,
-                                    surahNumb = it.surah,
-                                    juzNumb = null,
-                                    position = 0
+                            navigator.navigate(
+                                ReadScreenDestination(
+                                    ReadArg(
+                                        readType = 0,
+                                        surahNumb = it.surah,
+                                        juzNumb = null,
+                                        position = 0
+                                    )
                                 )
-                            ))
+                            )
                         }
                     }
                 })
             }
 
-            HomeItem(item = "Terakhir di baca", surah = LastRead.surahName, ayah = LastRead.ayahNumber) {
-                navigator.navigate(ReadScreenDestination(
-                    ReadArg(
-                        2,
-                        LastRead.surahNumber,
-                        0,
-                        LastRead.position
+            HomeItem(
+                item = if (SettingPreference.currentLang == SettingPreference.INDONESIA) "Terakhir di baca" else "Last read",
+                surah = LastRead.surahName,
+                ayah = LastRead.ayahNumber
+            ) {
+                navigator.navigate(
+                    ReadScreenDestination(
+                        ReadArg(
+                            2,
+                            LastRead.surahNumber,
+                            0,
+                            LastRead.position
+                        )
                     )
-                ))
+                )
             }
 
             TabRow(
@@ -299,16 +312,19 @@ fun HomeScreen(
                                             )
                                         },
                                         delete = {
-                                            homeViewModel.deleteBookmmark(Bookmark(
-                                                bookmark.id,
-                                                bookmark.surahName,
-                                                bookmark.ayahNumber,
-                                                bookmark.ayahNumber,
-                                                bookmark.ayahText,
-                                                bookmark.position,
-                                                bookmark.timeAdded
-                                            ))
-                                            Toast.makeText(context, "Delete", Toast.LENGTH_SHORT).show()
+                                            homeViewModel.deleteBookmmark(
+                                                Bookmark(
+                                                    bookmark.id,
+                                                    bookmark.surahName,
+                                                    bookmark.ayahNumber,
+                                                    bookmark.ayahNumber,
+                                                    bookmark.ayahText,
+                                                    bookmark.position,
+                                                    bookmark.timeAdded
+                                                )
+                                            )
+                                            Toast.makeText(context, "Delete", Toast.LENGTH_SHORT)
+                                                .show()
                                         }
                                     )
                                 }

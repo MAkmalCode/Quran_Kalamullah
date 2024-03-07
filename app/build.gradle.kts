@@ -120,6 +120,12 @@ dependencies {
 
     // snow player
     implementation ("com.github.jrfeng.snow:player:1.2.13")
+
+    // web view
+    implementation ("com.github.Justson.AgentWeb:agentweb-core:v4.1.9-androidx")
+
+    // lottie
+    implementation ("com.airbnb.android:lottie-compose:6.4.0")
 }
 
 kapt {

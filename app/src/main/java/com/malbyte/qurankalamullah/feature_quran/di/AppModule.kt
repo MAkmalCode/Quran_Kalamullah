@@ -3,8 +3,8 @@ package com.malbyte.qurankalamullah.feature_quran.di
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
-import com.malbyte.qurankalamullah.feature_quran.data.data_source.BookmarkDatabase
-import com.malbyte.qurankalamullah.feature_quran.data.data_source.QuranDatabase
+import com.malbyte.qurankalamullah.feature_quran.data.data_source.local.BookmarkDatabase
+import com.malbyte.qurankalamullah.feature_quran.data.data_source.local.QuranDatabase
 import com.malbyte.qurankalamullah.feature_quran.data.repository.QuranRepositoryImpl
 import com.malbyte.qurankalamullah.feature_quran.domain.repository.QuranRepository
 import com.malbyte.qurankalamullah.feature_quran.domain.use_case.DeleteAllBookmark
@@ -42,7 +42,7 @@ object AppModule {
     @Singleton
     fun provideBookmarkDatabase(
         @ApplicationContext context: Context
-    ): BookmarkDatabase{
+    ): BookmarkDatabase {
         return Room.databaseBuilder(
             context,
             BookmarkDatabase::class.java,
