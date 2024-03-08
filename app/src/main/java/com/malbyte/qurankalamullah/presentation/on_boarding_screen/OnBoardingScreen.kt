@@ -24,11 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.malbyte.qurankalamullah.feature_quran.data.GlobalPreference
 import com.malbyte.qurankalamullah.feature_quran.data.SettingPreference
+import com.malbyte.qurankalamullah.presentation.NavGraphs
 import com.malbyte.qurankalamullah.presentation.destinations.HomeScreenDestination
 import com.malbyte.qurankalamullah.ui.theme.Primary
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 
 @OptIn(ExperimentalFoundationApi::class)
 @RootNavGraph(start = true)
@@ -39,7 +41,10 @@ fun OnBoardingScreen(
 ) {
 
     if (GlobalPreference.firstTime == true) {
-        navigator.popBackStack(HomeScreenDestination, true)
+        navigator.navigate(HomeScreenDestination) {
+            popUpTo(NavGraphs.root) {inclusive = true}
+            launchSingleTop = true
+        }
     }
 
     val langState by remember {
@@ -123,7 +128,10 @@ fun OnBoardingScreen(
                                 contentColor = Color.White
                             ),
                             onClick = {
-                                navigator.popBackStack(HomeScreenDestination, true)
+                                navigator.navigate(HomeScreenDestination) {
+                                    popUpTo(NavGraphs.root) {inclusive = true}
+                                    launchSingleTop = true
+                                }
                                 GlobalPreference.firstTime = true
                                 Log.d("mencet", "Udah kepencet asli real nofake")
                             }

@@ -1,4 +1,4 @@
-package com.malbyte.qurankalamullah.feature_quran.data.data_source.location
+package com.malbyte.qurankalamullah.feature_quran.data.location
 
 import android.location.Location
 

@@ -1,5 +1,6 @@
 package com.malbyte.qurankalamullah.feature_quran.domain.repository
 
+import com.malbyte.qurankalamullah.feature_quran.data.data_source.remote.AdzanScheduleResponse
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Bookmark
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Juz
 import com.malbyte.qurankalamullah.feature_quran.domain.model.Quran
@@ -18,4 +19,8 @@ interface QuranRepository {
     suspend fun deleteAllBookmark()
     fun searchSurah(search: String): Flow<List<Surah>>
     fun searchEntireQuran(search: String): Flow<List<Quran>>
+    suspend fun getAdzanSchedule(
+        latitude: String,
+        longitude: String
+    ): AdzanScheduleResponse
 }
