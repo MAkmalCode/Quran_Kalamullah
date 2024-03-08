@@ -69,8 +69,6 @@ fun HomeScreen(
     navigator: DestinationsNavigator
 ) {
 
-    GlobalPreference.firstTime = 1
-
     val context = LocalContext.current
     var selectedTabIndex by remember {
         mutableIntStateOf(0)

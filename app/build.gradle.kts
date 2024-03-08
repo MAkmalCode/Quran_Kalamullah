@@ -126,6 +126,10 @@ dependencies {
 
     // lottie
     implementation ("com.airbnb.android:lottie-compose:6.4.0")
+
+    // loaction
+    implementation ("com.google.android.gms:play-services-location:21.1.0")
+    implementation ("com.google.accompanist:accompanist-permissions:0.23.1")
 }
 
 kapt {
