@@ -20,6 +20,7 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Explore
+import androidx.compose.material.icons.rounded.Mosque
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,6 +59,7 @@ import androidx.compose.runtime.collectAsState
 import com.malbyte.qurankalamullah.feature_quran.data.GlobalPreference
 import com.malbyte.qurankalamullah.feature_quran.data.SettingPreference
 import com.malbyte.qurankalamullah.presentation.destinations.FindQiblaScreenDestination
+import com.malbyte.qurankalamullah.presentation.destinations.PrayerScheduleDestination
 import com.malbyte.qurankalamullah.presentation.destinations.SettingScreenDestination
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -103,6 +105,11 @@ fun HomeScreen(
                     Text(text = "Qur'an Kalamullah")
                 },
                 actions = {
+                    IconButton(onClick = {
+                        navigator.navigate(PrayerScheduleDestination)
+                    }) {
+                        Icon(imageVector = Icons.Rounded.Mosque, contentDescription = "")
+                    }
                     IconButton(onClick = {
                         navigator.navigate(FindQiblaScreenDestination)
                     }) {
