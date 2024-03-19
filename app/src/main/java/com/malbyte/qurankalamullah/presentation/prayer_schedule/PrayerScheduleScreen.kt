@@ -10,8 +10,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -31,13 +37,15 @@ import com.malbyte.qurankalamullah.presentation.prayer_schedule.components.Praye
 import com.malbyte.qurankalamullah.presentation.prayer_schedule.state.ErrorType
 import com.malbyte.qurankalamullah.presentation.prayer_schedule.state.PrayerScheduleState
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import java.util.Locale.getDefault
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun PrayerSchedule(
-    viewModel: PrayerViewModel = hiltViewModel()
+    viewModel: PrayerViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
 
     val context = LocalContext.current
@@ -60,7 +68,18 @@ fun PrayerSchedule(
         }
     }
 
-    Scaffold {
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = if(SettingPreference.currentLang == SettingPreference.INDONESIA) "Jadwal Adzan" else "Adzan Schedule")},
+                navigationIcon = {
+                    IconButton(onClick = { navigator.navigateUp() }) {
+                        Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "")
+                    }
+                }
+            )
+        }
+    ) {
         Column(
             modifier = Modifier.padding(it),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,6 +100,7 @@ fun PrayerSchedule(
                     val subLocality = address.first().subLocality
                     val subAdminArea = address.first().subAdminArea
                     val currentLocation = "$locality, $subLocality, $subAdminArea"
+                    Spacer(modifier = Modifier.padding(top = 20.dp))
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = currentLocation,

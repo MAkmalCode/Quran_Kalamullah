@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Explore
@@ -56,7 +57,6 @@ import com.malbyte.qurankalamullah.ui.theme.Primary
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import androidx.compose.runtime.collectAsState
-import com.malbyte.qurankalamullah.feature_quran.data.GlobalPreference
 import com.malbyte.qurankalamullah.feature_quran.data.SettingPreference
 import com.malbyte.qurankalamullah.presentation.destinations.FindQiblaScreenDestination
 import com.malbyte.qurankalamullah.presentation.destinations.PrayerScheduleDestination
@@ -100,10 +100,11 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = {
                     Text(text = "Qur'an Kalamullah")
                 },
+                backgroundColor = Color.White,
                 actions = {
                     IconButton(onClick = {
                         navigator.navigate(PrayerScheduleDestination)
